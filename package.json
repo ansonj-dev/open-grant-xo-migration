@@ -6,6 +6,7 @@
   "description": "CashScript block-height grant and corresponding General Protocols XO template.",
   "keywords": ["bitcoin-cash", "xo", "cashscript", "migration", "grant"],
   "scripts": {
+    "build": "npm run export && node scripts/build-site.mjs",
     "dev": "node server.mjs",
     "export": "tsx export.ts",
     "compile:baseline": "cashc baseline/OpenGrant.cash --output baseline/OpenGrant.json",
