@@ -1,0 +1,9 @@
+pragma cashscript ^0.13.0;
+
+// Grant funds remain locked until a public block height. Only the beneficiary can withdraw.
+contract OpenGrant(pubkey beneficiary, int unlockHeight) {
+    function release(sig beneficiarySignature) {
+        require(tx.time >= unlockHeight);
+        require(checkSig(beneficiarySignature, beneficiary));
+    }
+}

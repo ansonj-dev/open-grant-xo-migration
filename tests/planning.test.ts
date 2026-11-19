@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { readFileSync } from 'node:fs';
+import { planGrant,validateGrantParameters } from '../planning.js';
+const sample=JSON.parse(readFileSync(new URL('../docs/public-parameters.EXAMPLE.json',import.meta.url),'utf8'));
+test('prepares both policy addresses without querying a provider',()=>{const p=planGrant(sample);assert.match(p.xoChipnetAddress,/^bchtest:/);assert.match(p.baselineChipnetAddress,/^bchtest:/)});
+for(const unlockHeight of [0,-1,500000000,1.5,'250000']) test(`rejects invalid unlock height ${unlockHeight}`,()=>assert.throws(()=>validateGrantParameters({...sample,unlockHeight})));
+test('rejects a plan already mature at the observed height',()=>assert.throws(()=>validateGrantParameters({...sample,observedChipnetHeight:sample.unlockHeight})));
+test('rejects integer amounts passed through Number',()=>assert.throws(()=>validateGrantParameters({...sample,grantSatoshis:25000})));
+test('rejects additional secret-like fields',()=>assert.throws(()=>validateGrantParameters({...sample,privateKey:'do-not-export'})));

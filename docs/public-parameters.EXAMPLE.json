@@ -1,0 +1,6 @@
+{
+  "beneficiaryPublicKey": "027fb498d211ddcfe2410a18f86d74664fa2277d61683cf62fc3f82d3bb62a371f",
+  "unlockHeight": 250000,
+  "observedChipnetHeight": 249000,
+  "grantSatoshis": "25000"
+}
