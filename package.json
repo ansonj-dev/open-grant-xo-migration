@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "description": "CashScript block-height grant and corresponding General Protocols XO template.",
+  "keywords": ["bitcoin-cash", "xo", "cashscript", "migration", "grant"],
   "scripts": {
     "dev": "node server.mjs",
     "export": "tsx export.ts",

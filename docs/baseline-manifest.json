@@ -1,6 +1,6 @@
 {
   "format": "open-grant-content-manifest-v1",
-  "generatedAt": "2026-11-19T08:22:07.008Z",
+  "generatedAt": "2026-11-19T13:02:49.877Z",
   "provenance": "Both implementations newly authored during BLAZE 2026; no earlier public history claimed.",
   "compiler": {
     "name": "cashc",
@@ -12,7 +12,7 @@
   },
   "files": {
     "baseline/OpenGrant.cash": "8a6c0f3b0637f00bd5821c927e55e12041dd8b1b70296bd67c89efba36135c25",
-    "baseline/OpenGrant.json": "9ae62497ea74b52e5ea8fad9806ab12dcdc5a6884ce3288b164d81bcb8a8499f",
+    "baseline/OpenGrant.json": "19c7e8b5a0f2354b45e13d8103623e38a627383a027189d4426cd610b210acae",
     "baseline/client.ts": "fa4be9ee4c764689b123ce09c65d7b4edd586e4d4ed298e3f69c7f390c83f24b",
     "xo/template.ts": "169eceb9e21f82703bf1a9ff3339b8be678ca6c06a47bf4728e34ca8e5608701"
   },

@@ -1,8 +1,12 @@
 # Open Grant — XO migration
 
-Judging status: **unqualified migration candidate**. A contemporaneously authored local baseline does not establish the bounty's existing-working-project criterion. See [docs/JUDGING-AUDIT.md](docs/JUDGING-AUDIT.md) for every criterion and the missing evidence.
+## Bounty readiness
 
-A small grant that releases to its beneficiary after an agreed BCH block height. Two implementations make the migration inspectable: `baseline/OpenGrant.cash` (CashScript) and `xo/template.ts` (XO). The baseline was authored in this workspace during BLAZE; it is not a previously published product. Sponsor confirmation of this migration's eligibility is still required.
+**Status: migration implementation exists; submission evidence is incomplete.** The [Migrate to XO bounty](https://bchblaze.cash/bounties/migrate-to-xo/) asks builders to integrate XO into an existing project or migrate existing functionality. It does not state that the original must have been public or created before BLAZE. This workspace contains a standalone CashScript baseline/client and an XO implementation of its grant behavior, which provides a plausible original-to-migration pair. Both were developed during this BLAZE work; no earlier publication or history is claimed. The original baseline still needs a working public presentation, and the XO version needs its required executed invitation and transaction evidence. If a judge interprets “existing project” more narrowly, that interpretation remains theirs to decide.
+
+The public source includes the [CashScript baseline](https://github.com/ansonj-dev/open-grant-xo-migration/blob/main/baseline/OpenGrant.cash) and [XO template](https://github.com/ansonj-dev/open-grant-xo-migration/blob/main/xo/template.ts). The XO debug-tool transaction, final invitation, follow-up release, and participant-written developer feedback remain outstanding. See the [criterion audit](docs/JUDGING-AUDIT.md), [provenance record](docs/PROVENANCE.md), and [invitation guide](docs/INVITATIONS.md). Local compilation and offline policy comparison do not satisfy those submission requirements.
+
+A small grant that releases to its beneficiary after an agreed BCH block height. Two implementations make the migration inspectable: `baseline/OpenGrant.cash` (CashScript) and `xo/template.ts` (XO). The baseline was authored in this workspace during BLAZE and was not previously published. Public source links now point to both implementations in this repository. A hosted working demo and executed demonstration remain outstanding.
 
 ## Run locally
 
@@ -52,14 +56,14 @@ The grant logic and workbench were authored for this project. SDKs and their ope
 
 ## Submitter guides
 
-Read [docs/INVITATIONS.md](docs/INVITATIONS.md) for fresh-wallet safety, public-only exports, offline inspection and absolute-lock timing. [docs/PROVENANCE.md](docs/PROVENANCE.md) records the baseline's origin and migration eligibility gap. Run the provenance script after compiling to refresh the content manifest.
+Read [docs/INVITATIONS.md](docs/INVITATIONS.md) for fresh-wallet safety, public-only exports, offline inspection and absolute-lock timing. [docs/PROVENANCE.md](docs/PROVENANCE.md) records the baseline's origin and the public evidence still required. Run the provenance script after compiling to refresh the content manifest.
 
 
 ## Public parameter preflight and checks
 
 `npm run plan -- docs/public-parameters.EXAMPLE.json` demonstrates the input format. The example key's private material was discarded; **never fund its address**. Replace it with your beneficiary's actual public key and set a manually observed live Chipnet height and future unlock height. The command validates curve points, amount encoding and the future-height relationship, then compiles both policy address plans. It does not query the chain.
 
-`npm test` runs 18 offline checks: six comparisons of real CashScript/XO script acceptance (height boundary, final sequence, wrong key and height-vs-time mismatch), plus nine public-parameter validation cases and three network/template-identity/public-derivation regressions. These are focused policy checks on synthetic transactions; they do not replace XO-engine lifecycle/Chipnet evidence. See [docs/JUDGING-AUDIT.md](docs/JUDGING-AUDIT.md) for the eligibility gap and evidence matrix. Treat this as an unqualified migration candidate until that gap is resolved.
+`npm test` runs 18 offline checks: six comparisons of CashScript/XO script acceptance (height boundary, final sequence, wrong key and height-vs-time mismatch), plus nine public-parameter validation cases and three network/template-identity/public-derivation regressions. These are policy checks on synthetic transactions; they do not replace XO-engine lifecycle or Chipnet evidence. See [docs/JUDGING-AUDIT.md](docs/JUDGING-AUDIT.md) for the criterion matrix and remaining submission evidence.
 
 
 
