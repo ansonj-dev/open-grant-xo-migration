@@ -1,2 +1,141 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Open Grant / XO migration</title><style>body{margin:0;background:#172b37;color:#e6eeec;font:16px/1.6 system-ui}main{max-width:1000px;margin:auto;padding:40px 24px}nav{display:flex;justify-content:space-between;border-bottom:1px solid #527080;padding-bottom:20px;font-size:13px;letter-spacing:.1em}h1{font:normal clamp(40px,7vw,76px)/1.1 Georgia;max-width:800px;margin-top:60px}p{max-width:700px;color:#a9c2cb}.layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:40px 0}section{background:#203b49;border:1px solid #466473;padding:28px}h2{font:normal 28px Georgia;margin-top:0}label{display:block;font-size:13px;margin:20px 0 6px}input{width:100%;box-sizing:border-box;padding:12px;font:20px system-ui;background:#172b37;color:#e6eeec;border:1px solid #78939a}a,button{display:inline-block;padding:12px 16px;background:#d9ab65;color:#142b37;text-decoration:none;border:0;font:14px system-ui;cursor:pointer;margin-top:20px}.stage{border-top:1px solid #527080;padding:16px 0}.tag{color:#f1c987}footer{font-size:13px;color:#91acb5;border-top:1px solid #527080;padding-top:20px}@media(max-width:650px){.layout{grid-template-columns:1fr}}</style><main><nav><b>OPEN GRANT</b><span>CashScript → XO / Chipnet</span></nav><h1>Make the release date<br>part of the agreement.</h1><p>A Bitcoin Cash grant locked to a public block height and the beneficiary's signature. A standalone CashScript implementation provides the baseline; an XO template coordinates funding and release.</p><div class="layout"><section><h2>Review the lock</h2><label for="height">Agreed unlock height</label><input id="height" type="number" value="250000" min="1" max="499999999" step="1"><label for="current">Observed Chipnet height · enter manually</label><input id="current" type="number" placeholder="Read from your node or explorer" min="0" step="1"><p id="status" aria-live="polite">Enter the observed chain height to review maturity.</p><a href="/template.json" download="open-grant.xo.json">Download XO template</a></section><section><h2>The same spending policy</h2><div class="stage"><span class="tag">01 / Baseline</span><br>OpenGrant.cash requires tx.time to reach unlockHeight, then checks the beneficiary signature.</div><div class="stage"><span class="tag">02 / Migration</span><br>XO encodes OP_CHECKLOCKTIMEVERIFY plus OP_CHECKSIG and preserves the release action on the funded output.</div><div class="stage"><span class="tag">03 / Evidence</span><br>Contract compilation complete. Offline policy parity checks pass. Funded execution, full XO lifecycle and public project links remain pending.</div><a href="https://blaze.xo.cash/" target="_blank" rel="noreferrer">Open XO debug tool ↗</a></section></div><details><summary>Review the migration evidence</summary><p>The baseline and XO version were both authored during this build. The bounty asks for migration of an existing project or functionality but gives no pre-event publication cutoff. This baseline is presented with its true development history; whether judges accept it as the original project is theirs to decide. Public project links and a funded Chipnet lifecycle are still missing.</p><p>Offline tests compare the CashScript and XO spending policies at, before and after the height and reject wrong keys and final sequences. They do not prove current chain maturity or an executed invitation.</p><p><code>npm run plan -- your-public-parameters.json</code> compiles a public-parameter plan for both versions. Example keys are unusable; never fund them.</p></details><footer>Local planning tool · No wallet connection or broadcast · Blocks are the unit of the lock; calendar dates are estimates.</footer></main><script>const height=document.querySelector('#height'),current=document.querySelector('#current'),status=document.querySelector('#status');function update(){let h=Number(height.value),c=Number(current.value);if(!Number.isInteger(h)||h<1||h>=5e8||!Number.isInteger(c)||c<0){status.textContent='Enter valid integer block heights.';return}if(!current.value){status.textContent='Enter the observed chain height to review maturity.';return}status.textContent=c>=h?'Height reached. The beneficiary signature is still required.':`${h-c} blocks remain. Funding does not start or reset this absolute-height lock.`}height.oninput=current.oninput=update;</script></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Open Grant: a Bitcoin Cash grant locked to a block height, as a CashScript baseline and a General Protocols XO template.">
+<title>Open Grant · CashScript to XO migration</title>
+<style>
+:root{--bg:#142631;--panel:#1c3644;--line:#3f6071;--text:#e8f0ee;--muted:#a9c2cb;--gold:#e0b46f;--ok:#7fd1a5;--warn:#f1c987;--focus:#ffffff}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1040px;margin:auto;padding:24px 24px 48px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--gold);color:#142b37;padding:8px 12px;z-index:9}
+.skip:focus{left:8px}
+nav{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:16px;font-size:13px;letter-spacing:.1em}
+nav span{color:var(--muted)}
+h1{font:normal clamp(36px,7vw,72px)/1.08 Georgia,serif;max-width:800px;margin:56px 0 16px}
+h2{font:normal 26px/1.25 Georgia,serif;margin:0 0 12px}
+h3{font-size:14px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px;color:var(--warn)}
+p{max-width:720px;color:var(--muted);margin:0 0 12px}
+.lede{font-size:18px}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:32px 0}
+section{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:28px}
+.wide{grid-column:1/-1}
+label{display:block;font-size:14px;margin:18px 0 6px}
+input{width:100%;padding:12px;font:20px system-ui,sans-serif;background:var(--bg);color:var(--text);border:1px solid #78939a;border-radius:4px}
+input:invalid{border-color:#e58a8a}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.btn{display:inline-block;padding:12px 18px;background:var(--gold);color:#142b37;text-decoration:none;border:0;border-radius:4px;font:600 14px system-ui,sans-serif;cursor:pointer;margin-top:18px}
+.btn:hover{background:#efc88b}
+a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.status{margin-top:16px;padding:12px 14px;border-left:4px solid var(--line);background:var(--bg);color:var(--text);border-radius:0 4px 4px 0}
+.status.ok{border-color:var(--ok)}.status.wait{border-color:var(--warn)}.status.err{border-color:#e58a8a}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+.role{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:16px}
+.role p{margin:0;font-size:15px}
+.timeline{display:flex;align-items:center;gap:8px;margin:16px 0 4px;font-size:13px;color:var(--muted)}
+.bar{flex:1;height:8px;border-radius:4px;background:#2a4a5a;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+table{width:100%;border-collapse:collapse;font-size:15px}
+caption{text-align:left;color:var(--muted);padding-bottom:8px;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-top:1px solid var(--line)}
+thead th{border-top:0;color:var(--warn);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+tbody th{font-weight:600;width:22%;color:var(--text)}
+td{color:var(--muted)}
+code{background:var(--bg);padding:1px 6px;border-radius:3px;font-size:.92em;color:var(--text)}
+.evidence li{margin:6px 0;color:var(--muted)}
+.pending{color:var(--warn)}
+details{margin:8px 0 32px}
+summary{cursor:pointer;padding:12px 0;font-weight:600}
+footer{font-size:13px;color:#91acb5;border-top:1px solid var(--line);padding-top:20px}
+@media(max-width:700px){.layout,.roles{grid-template-columns:1fr}section{padding:20px}main{padding:16px}.tablewrap{overflow-x:auto}table{min-width:520px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<main id="main">
+<nav aria-label="Project"><b>OPEN GRANT</b><span>CashScript → XO · Chipnet planning</span></nav>
+<header>
+<h1>Make the release date part of the agreement.</h1>
+<p class="lede">A Bitcoin Cash grant locked to a public block height and the beneficiary's signature. A standalone CashScript contract is the baseline. An XO template coordinates funding and release with the same spending policy.</p>
+</header>
 
+<div class="layout">
+<section aria-labelledby="lock-h">
+<h2 id="lock-h">Review the unlock height</h2>
+<p>The lock is an absolute block height, not a countdown. Funding late does not restart it.</p>
+<label for="height">Agreed unlock height (block)</label>
+<input id="height" type="number" inputmode="numeric" value="250000" min="1" max="499999999" step="1" aria-describedby="height-hint">
+<p class="hint" id="height-hint">Whole number from 1 to 499,999,999. Values of 500,000,000 and above are timestamps in Bitcoin Script, so they are rejected.</p>
+<label for="current">Observed Chipnet height (enter manually)</label>
+<input id="current" type="number" inputmode="numeric" placeholder="Read from your node or explorer" min="0" step="1" aria-describedby="status">
+<div class="timeline" aria-hidden="true"><span>Funded</span><div class="bar"><i id="bar"></i></div><span id="barLabel">Unlock</span></div>
+<p id="status" class="status wait" role="status" aria-live="polite">Enter the observed chain height to review maturity.</p>
+<a class="btn" href="/template.json" download="open-grant.xo.json">Download XO template</a>
+</section>
+
+<section aria-labelledby="roles-h">
+<h2 id="roles-h">Who does what</h2>
+<div class="roles">
+<div class="role"><h3>Sponsor</h3><p>Funds the grant output. Cannot spend it back and cannot move the unlock height after funding.</p></div>
+<div class="role"><h3>Beneficiary</h3><p>Holds the key that signs the release. Can spend only once the chain reaches the unlock height.</p></div>
+</div>
+<h3 style="margin-top:20px">Release rule</h3>
+<p>Spend requires <code>tx.time ≥ unlockHeight</code> and a valid beneficiary signature. Both must hold.</p>
+<a class="btn" href="https://blaze.xo.cash/" target="_blank" rel="noreferrer" aria-label="Open XO debug tool (opens in a new tab)">Open XO debug tool ↗</a>
+</section>
+
+<section class="wide" aria-labelledby="cmp-h">
+<h2 id="cmp-h">Baseline CashScript vs XO migration</h2>
+<p>Same spending policy, expressed two ways.</p>
+<div class="tablewrap">
+<table>
+<caption>Side-by-side comparison of the two implementations</caption>
+<thead><tr><th scope="col">Aspect</th><th scope="col">01 · Baseline (CashScript)</th><th scope="col">02 · Migration (XO template)</th></tr></thead>
+<tbody>
+<tr><th scope="row">Source</th><td><code>baseline/OpenGrant.cash</code></td><td><code>xo/template.ts</code>, exported to <code>open-grant.xo.json</code></td></tr>
+<tr><th scope="row">Time lock</th><td><code>require(tx.time &gt;= unlockHeight)</code></td><td><code>OP_CHECKLOCKTIMEVERIFY</code> against the unlock height</td></tr>
+<tr><th scope="row">Authorization</th><td><code>checkSig(beneficiarySignature, beneficiary)</code></td><td><code>OP_CHECKSIG</code> with the beneficiary key</td></tr>
+<tr><th scope="row">Coordination</th><td>Single contract call from application code</td><td>Release action preserved on the funded output, so parties coordinate through XO invitations</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section class="wide evidence" aria-labelledby="ev-h">
+<h2 id="ev-h">03 · Evidence status</h2>
+<ul>
+<li>Contract compiles and offline policy parity tests pass.</li>
+<li class="pending">Pending: funded Chipnet execution, full XO lifecycle, and public project links.</li>
+</ul>
+</section>
+</div>
+
+<details>
+<summary>Review the migration evidence</summary>
+<p>The baseline and XO version were both authored during this build. The bounty asks for migration of an existing project or functionality but gives no pre-event publication cutoff. This baseline is presented with its true development history. Whether judges accept it as the original project is theirs to decide. Public project links and a funded Chipnet lifecycle are still missing.</p>
+<p>Offline tests compare the CashScript and XO spending policies at, before and after the height and reject wrong keys and final sequences. They do not prove current chain maturity or an executed invitation.</p>
+<p><code>npm run plan -- your-public-parameters.json</code> compiles a public-parameter plan for both versions. Example keys are unusable. Never fund them.</p>
+</details>
+
+<footer>Local planning tool · No wallet connection or broadcast · Blocks are the unit of the lock. Calendar dates are estimates.</footer>
+</main>
+<script>
+const height=document.querySelector('#height'),current=document.querySelector('#current'),status=document.querySelector('#status'),bar=document.querySelector('#bar'),barLabel=document.querySelector('#barLabel');
+function set(cls,text,pct){status.className='status '+cls;status.textContent=text;bar.style.width=pct+'%';}
+function update(){
+  const h=Number(height.value),c=Number(current.value);
+  if(!Number.isInteger(h)||h<1||h>=5e8){set('err','Enter a whole unlock height from 1 to 499,999,999.',0);return}
+  if(!current.value){set('wait','Enter the observed chain height to review maturity.',0);return}
+  if(!Number.isInteger(c)||c<0){set('err','Enter a whole, non-negative observed height.',0);return}
+  if(c>=h){set('ok','Height reached. The beneficiary signature is still required.',100)}
+  else{set('wait',`${(h-c).toLocaleString('en-US')} blocks remain. Funding does not start or reset this absolute-height lock.`,Math.max(0,Math.min(99,c/h*100)))}
+}
+height.addEventListener('input',update);current.addEventListener('input',update);
+</script>
+</body>
+</html>
