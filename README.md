@@ -12,6 +12,8 @@ A small grant that releases to its beneficiary after an agreed BCH block height.
 
 Use Node 24+, then `npm install`, `npm run compile:baseline`, `npm run export`, `npm run dev`. Open http://127.0.0.1:4203. The local UI reviews the lock and downloads the template; it does not sign or broadcast.
 
+> Prerequisite: the XO engine pulls a native dependency (`better-sqlite3`) that compiles during install. On a machine without a C/C++ build toolchain (e.g. Visual Studio "Desktop development with C++" on Windows), `npm install`/`npm ci` will fail at the native build step. The offline checks here (`compile:baseline`, `export`, `check`, `test`, `provenance`, `plan`) do not need that binary — run `npm install --ignore-scripts` to set up. A platform SQLite binary may need `npm rebuild sqlite3` before engine execution.
+
 The baseline compile creates `baseline/OpenGrant.json`. `baseline/client.ts` instantiates it on Chipnet from a compressed beneficiary public key and unlock height. Use a fresh Chipnet key and fund its contract address with test BCH. CashScript 0.13 uses `contract.unlock.release(signatureTemplate)` with a `TransactionBuilder`, an explicit `.setLocktime(unlockHeight)` and a non-final input sequence. Review the fee and full outputs before signing.
 
 ## Migration mapping
